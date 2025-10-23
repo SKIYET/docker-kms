@@ -75,21 +75,35 @@ volumes:
 networks:
   frontend:
 ```
+To find out how you can change the default UID/GID of this container image, consult the [how-to.changeUIDGID](https://github.com/11notes/RTFM/blob/main/linux/container/image/11notes/how-to.changeUIDGID.md#change-uidgid-the-correct-way) section of my [RTFM](https://github.com/11notes/RTFM)
 
 # EXAMPLE
-## Windows Server 2025 Datacenter. List of [GVLK](https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys)
+## Add your product key
+Windows Server 2025 Datacenter. List of [GVLK](https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys)
 ```cmd
 slmgr /ipk D764K-2NDRG-47T6Q-P8T8W-YP6DF
 ```
-Add your KMS server information to server via registry
+## Add your KMS server information
+... via CLI
+```
+ slmgr /skms KMS_IP:KMS_PORT
+```
+... via registry (or add these key to your GPO)
 ```powershell
+"Windows"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform" -Name "KeyManagementServiceName" -Value "KMS_IP"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform" -Name "KeyManagementServicePort" -Value "KMS_PORT"
 
+"Office"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform" -Name "KeyManagementServiceName" -Value "KMS_IP"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\OfficeSoftwareProtectionPlatform" -Name "KeyManagementServicePort" -Value "KMS_PORT"
 ```
-Activate server
+... via DNS
+```sh
+# BIND
+_vlmcs._tcp SRV 0 0 KMS_PORT KMS_IP
+```
+## Activate server
 ```cmd
 slmgr /ato
 ```
@@ -154,4 +168,4 @@ This image supports unraid by default. Simply add **-unraid** to any tag and the
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-kms/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-kms/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-kms/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 20.07.2025, 23:53:17 (CET)*
+*created 23.10.2025, 07:06:45 (CET)*
